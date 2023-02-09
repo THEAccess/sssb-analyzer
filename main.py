@@ -61,7 +61,7 @@ def find_most_recent_file_path() -> Optional[str]:
     files = [f for f in os.listdir(directory) if isfile(join(directory, f)) and f != ".DS_Store"]
     if len(files) == 0:
         return None
-    sorted_files = sorted(files, key=lambda e: datetime.datetime.strptime(e.removesuffix('.csv'), time_format))
+    sorted_files = sorted(files, key=lambda e: datetime.datetime.strptime(e.removesuffix('.csv'), time_format), reverse=True)
     return "{directory}/{f}".format(directory=directory, f=sorted_files[0])
 
 
@@ -104,13 +104,13 @@ def run():
         if any_diff(previous, data):
             print("{}: Found difference. Saving".format(datetime.datetime.now()))
             save_to_csv(data)
-        else
+        else:
             print("Didn't find any difference. Not saving file")
     else:
         save_to_csv(data)
 
     print(data)
-    save_to_csv(data)
+
 
 
 def loop():
