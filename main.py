@@ -37,7 +37,8 @@ def get_website(url):
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
 
-    headlines = find(soup, 'h3', 'ObjektTyp', lambda h3: h3.find('a'))
+    id = find(soup, 'h4', 'ObjektAdress', lambda e: e.find('a'))
+    headlines = find(soup, 'h3', 'ObjektTyp', lambda e: e.find('a'))
 
     raw_queue_days = find(soup, 'dd', 'ObjektAntalIntresse')
     split = nzip(nmap(lambda e: e.split(' '), raw_queue_days))
@@ -47,15 +48,23 @@ def get_website(url):
     moving_in_date = find(soup, 'dd', 'ObjektInflytt')
     size = find(soup, 'dd', 'ObjektYta')
     rent = find(soup, 'dd', 'ObjektHyra')
-    floor = find(soup, 'dd', 'ObjektVaning')
+    floor = nmap(lambda s: s.strip(), find(soup, 'dd', 'ObjektVaning'))
 
-    t = [headlines, queue_days, no_applicants, moving_in_date, size, rent, floor]
-    titles = ["Title", "Queue Days", "No. Applicants", "Moving in Date", "Flor", "Size", "Rent"]
+    t = [id, headlines, queue_days, no_applicants, moving_in_date, floor, size, rent]
+    titles = ["Id", "Title", "Queue Days", "No. Applicants", "Moving in Date", "Flor", "Size", "Rent"]
 
     z = nzip(t)
     z.insert(0, titles)
-    print(list(t))
     print(z)
+
+    f = open("/Users/yannickknoll/Desktop/data.csv", 'w')
+
+    writer = csv.writer(f)
+
+    for row in z:
+        writer.writerow(row)
+
+    f.close()
 
 
 if __name__ == '__main__':
