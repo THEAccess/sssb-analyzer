@@ -31,41 +31,52 @@ def nzip(arr):
     return list(zip(*arr))
 
 
-def get_website(url):
+def get_website_content(url):
     driver = webdriver.Chrome('./chromedriver')
     driver.get(target)
     html = driver.page_source
-    soup = BeautifulSoup(html, 'html.parser')
+    return BeautifulSoup(html, 'html.parser')
 
-    id = find(soup, 'h4', 'ObjektAdress', lambda e: e.find('a'))
-    headlines = find(soup, 'h3', 'ObjektTyp', lambda e: e.find('a'))
 
-    raw_queue_days = find(soup, 'dd', 'ObjektAntalIntresse')
+def extract_data(website):
+    id = find(website, 'h4', 'ObjektAdress', lambda e: e.find('a'))
+    headlines = find(website, 'h3', 'ObjektTyp', lambda e: e.find('a'))
+
+    raw_queue_days = find(website, 'dd', 'ObjektAntalIntresse')
     split = nzip(nmap(lambda e: e.split(' '), raw_queue_days))
 
     queue_days = split[0]
     no_applicants = nmap(lambda s: s[1:2], split[1])
-    moving_in_date = find(soup, 'dd', 'ObjektInflytt')
-    size = find(soup, 'dd', 'ObjektYta')
-    rent = find(soup, 'dd', 'ObjektHyra')
-    floor = nmap(lambda s: s.strip(), find(soup, 'dd', 'ObjektVaning'))
+    moving_in_date = find(website, 'dd', 'ObjektInflytt')
+    size = find(website, 'dd', 'ObjektYta')
+    rent = find(website, 'dd', 'ObjektHyra')
+    floor = nmap(lambda s: s.strip(), find(website, 'dd', 'ObjektVaning'))
 
     t = [id, headlines, queue_days, no_applicants, moving_in_date, floor, size, rent]
     titles = ["Id", "Title", "Queue Days", "No. Applicants", "Moving in Date", "Flor", "Size", "Rent"]
 
     z = nzip(t)
     z.insert(0, titles)
-    print(z)
+    return z
 
+
+def save_to_csv(data):
     f = open("/Users/yannickknoll/Desktop/data.csv", 'w')
 
     writer = csv.writer(f)
 
-    for row in z:
+    for row in data:
         writer.writerow(row)
 
     f.close()
 
 
+def run():
+    content = get_website_content(target)
+    data = extract_data(content)
+    print(data)
+    save_to_csv(data)
+
+
 if __name__ == '__main__':
-    get_website('PyCharm')
+    run()
