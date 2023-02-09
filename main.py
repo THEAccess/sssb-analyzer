@@ -20,26 +20,41 @@ def map_2d(func, array):
     return list(nmap(lambda nested_array: nmap(func, nested_array), array))
 
 
-def get_website(name):
+def find(soup, tag, clazz, func=None):
+    res = soup.find_all(tag, attrs={'class': clazz})
+    if func is not None:
+        res = nmap(func, res)
+    return nmap(lambda e: e.text, res)
+
+
+def nzip(arr):
+    return list(zip(*arr))
+
+
+def get_website(url):
     driver = webdriver.Chrome('./chromedriver')
     driver.get(target)
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
 
-    headlines = nmap(lambda h3: h3.find('a'), soup.find_all('h3', attrs={'class': 'ObjektTyp'}))
-    raw_queue_days = soup.find_all('dd', attrs={'class': 'ObjektAntalIntresse'})
-    moving_in_date = soup.find_all('dd', attrs={'class': 'ObjektInflytt'})
-    size = soup.find_all('dd', attrs={'class': 'ObjektYta'})
-    rent = soup.find_all('dd', attrs={'class': 'ObjektHyra'})
-    floor = soup.find_all('dd', attrs={'class': 'ObjektVaning'})
+    headlines = find(soup, 'h3', 'ObjektTyp', lambda h3: h3.find('a'))
 
-    t = [headlines, raw_queue_days, moving_in_date, size, rent, floor]
+    raw_queue_days = find(soup, 'dd', 'ObjektAntalIntresse')
+    split = nzip(nmap(lambda e: e.split(' '), raw_queue_days))
+
+    queue_days = split[0]
+    no_applicants = nmap(lambda s: s[1:2], split[1])
+    moving_in_date = find(soup, 'dd', 'ObjektInflytt')
+    size = find(soup, 'dd', 'ObjektYta')
+    rent = find(soup, 'dd', 'ObjektHyra')
+    floor = find(soup, 'dd', 'ObjektVaning')
+
+    t = [headlines, queue_days, no_applicants, moving_in_date, size, rent, floor]
     titles = ["Title", "Queue Days", "No. Applicants", "Moving in Date", "Flor", "Size", "Rent"]
-    r = map_2d(lambda e: e.text, t)
 
-    z = list(zip(*r))
+    z = nzip(t)
     z.insert(0, titles)
-    print(list(r))
+    print(list(t))
     print(z)
 
 
