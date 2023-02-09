@@ -1,34 +1,12 @@
-# This is a sample Python script.
-import time
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import csv
-from selenium.webdriver.common.keys import Keys
-import requests
+import os
+
+from utils import find, nzip, nmap
 
 target = "https://sssb.se/soka-bostad/sok-ledigt/lediga-bostader/?actionId=&omraden=Lappis&oboTyper=BOAS1&hyraMax="
-
-
-def nmap(func, array):
-    return list(map(func, array))
-
-
-def map_2d(func, array):
-    return list(nmap(lambda nested_array: nmap(func, nested_array), array))
-
-
-def find(soup, tag, clazz, func=None):
-    res = soup.find_all(tag, attrs={'class': clazz})
-    if func is not None:
-        res = nmap(func, res)
-    return nmap(lambda e: e.text, res)
-
-
-def nzip(arr):
-    return list(zip(*arr))
+path = "{}/Desktop/data.csv".format(os.getenv('HOME'))
 
 
 def get_website_content(url):
@@ -61,7 +39,7 @@ def extract_data(website):
 
 
 def save_to_csv(data):
-    f = open("/Users/yannickknoll/Desktop/data.csv", 'w')
+    f = open(path, 'w')
 
     writer = csv.writer(f)
 
