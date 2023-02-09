@@ -8,6 +8,7 @@ import os
 from os.path import isfile, join
 import datetime
 from typing import List
+from selenium.webdriver.chrome.service import Service
 
 from utils import find_sssb_element, nzip, nmap, find_2d
 
@@ -17,8 +18,9 @@ time_format = '%Y-%m-%d_%H-%M-%S'
 
 
 def get_website_content(url):
-    driver = webdriver.Chrome('./chromedriver')
-    driver.get(target)
+    s = Service('./chromedriver')
+    driver = webdriver.Chrome(s)
+    driver.get(url)
     html = driver.page_source
     return BeautifulSoup(html, 'html.parser')
 
@@ -61,7 +63,8 @@ def find_most_recent_file_path() -> Optional[str]:
     files = [f for f in os.listdir(directory) if isfile(join(directory, f)) and f != ".DS_Store"]
     if len(files) == 0:
         return None
-    sorted_files = sorted(files, key=lambda e: datetime.datetime.strptime(e.removesuffix('.csv'), time_format), reverse=True)
+    sorted_files = sorted(files, key=lambda e: datetime.datetime.strptime(e.removesuffix('.csv'), time_format),
+                          reverse=True)
     return "{directory}/{f}".format(directory=directory, f=sorted_files[0])
 
 
@@ -110,7 +113,6 @@ def run():
         save_to_csv(data)
 
     print(data)
-
 
 
 def loop():
