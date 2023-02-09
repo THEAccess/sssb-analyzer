@@ -1,12 +1,19 @@
+import time
+from typing import Optional
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import csv
 import os
+from os.path import isfile, join
+import datetime
+from typing import List
 
-from utils import find, nzip, nmap
+from utils import find_sssb_element, nzip, nmap, find_2d
 
 target = "https://sssb.se/soka-bostad/sok-ledigt/lediga-bostader/?actionId=&omraden=Lappis&oboTyper=BOAS1&hyraMax="
-path = "{}/Desktop/data.csv".format(os.getenv('HOME'))
+directory = "{}/sssbscraper".format(os.getenv('HOME'))
+time_format = '%Y-%m-%d_%H-%M-%S'
 
 
 def get_website_content(url):
@@ -17,18 +24,18 @@ def get_website_content(url):
 
 
 def extract_data(website):
-    id = find(website, 'h4', 'ObjektAdress', lambda e: e.find('a'))
-    headlines = find(website, 'h3', 'ObjektTyp', lambda e: e.find('a'))
+    id = find_sssb_element(website, 'h4', 'ObjektAdress', lambda e: e.find('a'))
+    headlines = find_sssb_element(website, 'h3', 'ObjektTyp', lambda e: e.find('a'))
 
-    raw_queue_days = find(website, 'dd', 'ObjektAntalIntresse')
+    raw_queue_days = find_sssb_element(website, 'dd', 'ObjektAntalIntresse')
     split = nzip(nmap(lambda e: e.split(' '), raw_queue_days))
 
     queue_days = split[0]
     no_applicants = nmap(lambda s: s[1:2], split[1])
-    moving_in_date = find(website, 'dd', 'ObjektInflytt')
-    size = find(website, 'dd', 'ObjektYta')
-    rent = find(website, 'dd', 'ObjektHyra')
-    floor = nmap(lambda s: s.strip(), find(website, 'dd', 'ObjektVaning'))
+    moving_in_date = find_sssb_element(website, 'dd', 'ObjektInflytt')
+    size = find_sssb_element(website, 'dd', 'ObjektYta')
+    rent = find_sssb_element(website, 'dd', 'ObjektHyra')
+    floor = nmap(lambda s: s.strip(), find_sssb_element(website, 'dd', 'ObjektVaning'))
 
     t = [id, headlines, queue_days, no_applicants, moving_in_date, floor, size, rent]
     titles = ["Id", "Title", "Queue Days", "No. Applicants", "Moving in Date", "Flor", "Size", "Rent"]
@@ -39,7 +46,8 @@ def extract_data(website):
 
 
 def save_to_csv(data):
-    f = open(path, 'w')
+    file_name = "{directory}/{time}.csv".format(directory=directory, time=datetime.datetime.now().strftime(time_format))
+    f = open(file_name, 'w')
 
     writer = csv.writer(f)
 
@@ -49,12 +57,68 @@ def save_to_csv(data):
     f.close()
 
 
+def find_most_recent_file_path() -> Optional[str]:
+    files = [f for f in os.listdir(directory) if isfile(join(directory, f)) and f != ".DS_Store"]
+    if len(files) == 0:
+        return None
+    sorted_files = sorted(files, key=lambda e: datetime.datetime.strptime(e.removesuffix('.csv'), time_format))
+    return "{directory}/{f}".format(directory=directory, f=sorted_files[0])
+
+
+def read_csv(path) -> List[List[str]]:
+    # opening the CSV file
+    res = []
+    with open(path, mode='r') as file:
+        # reading the CSV file
+        f = csv.reader(file)
+
+        # displaying the contents of the CSV file
+        for lines in f:
+            res.append(lines)
+    return res
+
+
+def any_diff(current, new) -> bool:
+    return not find_diff(current, new)
+
+
+def find_diff(current, new):
+    res = list()
+    current = current.pop(0)
+    new = new.pop(0)
+    for entry in current:
+        id = entry[0]
+        opposite = find_2d(id, new, 0)
+        if opposite != entry:
+            res.append(opposite)
+    return res
+
+
 def run():
+    prev_path = find_most_recent_file_path()
     content = get_website_content(target)
     data = extract_data(content)
+
+    if prev_path is not None:
+        previous = read_csv(prev_path)
+        if any_diff(previous, data):
+            print("{}: Found difference. Saving".format(datetime.datetime.now()))
+            save_to_csv(data)
+        else
+            print("Didn't find any difference. Not saving file")
+    else:
+        save_to_csv(data)
+
     print(data)
     save_to_csv(data)
 
 
+def loop():
+    while True:
+        print("{}: Scheduled execution".format(datetime.datetime.now()))
+        run()
+        time.sleep(60 * 5)
+
+
 if __name__ == '__main__':
-    run()
+    loop()
