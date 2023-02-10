@@ -9,11 +9,14 @@ from selenium import webdriver
 
 def get_website_content(url):
     options = Options()
+    # Set headless mode to True so the browser runs in the background
     options.headless = True
     driver = webdriver.Chrome(options=options)
     driver.get(url)
+    # wait until element on page is located
     WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'ObjektAntalIntresse')))
     html = driver.page_source
+    # Return dynamically generated html
     return BeautifulSoup(html, 'html.parser')
 
 
@@ -31,12 +34,13 @@ def extract_sssb_data(website):
     rent = find_sssb_element(website, 'dd', 'ObjektHyra')
     floor = nmap(lambda s: s.strip(), find_sssb_element(website, 'dd', 'ObjektVaning'))
 
-    t = [id, headlines, queue_days, no_applicants, moving_in_date, floor, size, rent]
+    columns = [id, headlines, queue_days, no_applicants, moving_in_date, floor, size, rent]
     titles = ["Id", "Title", "Queue Days", "No. Applicants", "Moving in Date", "Flor", "Size", "Rent"]
 
-    z = nzip(t)
-    z.insert(0, titles)
-    return z
+    # Transpose from an array of columns to an array of rows to make it csv writeable
+    rows = nzip(columns)
+    rows.insert(0, titles)
+    return rows
 
 
 def find_sssb_element(soup, tag, clazz, func=None):
