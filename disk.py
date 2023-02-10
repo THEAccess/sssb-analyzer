@@ -2,7 +2,7 @@ from typing import Optional
 import csv
 from typing import List
 import datetime
-from date import closest_monday_16_or_thursday_10
+from date import next_closest_SSSB_closing_time
 from os.path import isfile, join
 import os
 from params import base_directory, disk_time_format
@@ -32,7 +32,7 @@ def find_most_recent_file_path(path) -> Optional[str]:
 
 def get_current_working_dir() -> str:
     path = "{directory}/{d}".format(directory=base_directory,
-                                    d=closest_monday_16_or_thursday_10().strftime(disk_time_format))
+                                    d=next_closest_SSSB_closing_time().strftime(disk_time_format))
 
     dir = path.rsplit('/', 1)[0]
 
