@@ -11,7 +11,7 @@ from params import base_directory, disk_time_format, analyze_file_name
 from utils import output
 
 
-def save_to_csv(data: Table, path, name = None):
+def save_to_csv(data: Table, path, name=None):
     n = datetime.datetime.now().strftime(disk_time_format)
     if name is not None:
         n = name
@@ -61,10 +61,9 @@ def read_csv(path) -> Table:
 
 def read_dir(directory) -> List[Table]:
     res = []
-    for root, dirs, files in os.walk(directory):
-        for filename in files:
-            if not filename.startswith(".") and not filename == analyze_file_name:
-                p = os.path.join(root, filename)
-                output("Reading {}".format(p))
-                res.append(read_csv(p))
+    for item in os.listdir(directory):
+        p = os.path.join(directory, item)
+        if os.path.isfile(p) and not item.startswith(".") and not item.startswith(analyze_file_name):
+            output("Reading {}".format(p))
+            res.append(read_csv(p))
     return res
