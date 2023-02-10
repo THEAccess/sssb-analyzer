@@ -28,8 +28,8 @@ def extract_sssb_data(website) -> Data:
     raw_queue_days = find_sssb_element(website, 'dd', 'ObjektAntalIntresse')
     split = nzip(nmap(lambda e: e.split(' '), raw_queue_days))
 
-    queue_days = split[0]
-    no_applicants = nmap(lambda s: s[1:2], split[1])
+    queue_days = nmap(lambda e: int(e), split[0])
+    no_applicants = nmap(lambda s: int(s[1:2]), split[1])
     moving_in_date = find_sssb_element(website, 'dd', 'ObjektInflytt')
     size = find_sssb_element(website, 'dd', 'ObjektYta')
     rent = find_sssb_element(website, 'dd', 'ObjektHyra')
