@@ -9,7 +9,7 @@ from constants import directory, time_format
 
 
 def save_to_csv(data, path):
-    f = open(path, 'w')
+    f = open("{p}/{f}.csv".format(p=path, f=datetime.datetime.now().strftime(time_format)), 'w')
 
     writer = csv.writer(f)
 
@@ -31,9 +31,9 @@ def find_most_recent_file_path(path) -> Optional[str]:
 
 
 def get_current_working_dir() -> str:
-    path = "{directory}/{d}/{time}.csv".format(directory=directory,
-                                               d=closest_monday_16_or_thursday_10().strftime(time_format),
-                                               time=datetime.datetime.now().strftime(time_format))
+    path = "{directory}/{d}".format(directory=directory,
+                                    d=closest_monday_16_or_thursday_10().strftime(time_format))
+
     dir = path.rsplit('/', 1)[0]
 
     if not os.path.isdir(dir):
