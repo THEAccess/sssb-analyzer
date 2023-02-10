@@ -5,6 +5,7 @@ from disk import get_current_working_dir, find_most_recent_file_path, read_csv, 
 from params import base_url, run_interval_minutes_default
 from scraper import get_website_content, extract_sssb_data
 from utils import output, any_diff, get_arg
+import optparse
 
 
 def run(directory: str):
@@ -27,7 +28,7 @@ def run(directory: str):
         save_to_csv(data, working_dir)
 
 
-def loop(directory: str):
+def loop(directory: str, url: str):
     output("Saving results to: {}".format(directory))
     output("This programme will run indefinitely until terminated.")
     while True:
@@ -38,4 +39,7 @@ def loop(directory: str):
 
 if __name__ == '__main__':
     base_dir = get_arg("base_dir", 0)
-    loop(base_dir)
+    p = optparse.OptionParser()
+    p.add_option('--url', '-u', default=base_url)
+    options, arguments = p.parse_args()
+    loop(arguments, options.url)
