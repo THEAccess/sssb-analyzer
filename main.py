@@ -10,7 +10,7 @@ import datetime
 from typing import List
 from selenium.webdriver.chrome.service import Service
 
-from utils import find_sssb_element, nzip, nmap, find_2d
+from utils import find_sssb_element, nzip, nmap, find_2d, lists_equal
 
 target = "https://sssb.se/soka-bostad/sok-ledigt/lediga-bostader/?actionId=&omraden=Lappis&oboTyper=BOAS1&hyraMax="
 directory = "{}/sssbscraper".format(os.getenv('HOME'))
@@ -87,12 +87,11 @@ def any_diff(current, new) -> bool:
 
 def find_diff(current, new):
     res = list()
-    current = current.pop(0)
-    new = new.pop(0)
+    current.pop(0)
+    new.pop(0)
     for entry in current:
-        id = entry[0]
-        opposite = find_2d(id, new, 0)
-        if opposite != entry:
+        opposite = find_2d(entry[0], new, 0)
+        if opposite is not None and not lists_equal(new, opposite):
             res.append(opposite)
     return res
 

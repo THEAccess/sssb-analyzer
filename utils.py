@@ -13,12 +13,20 @@ def find_sssb_element(soup, tag, clazz, func=None):
     return nmap(lambda e: e.text, res)
 
 
+def lists_equal(list1, list2):
+    if len(list1) != len(list2):
+        return False
+    for i in range(len(list1)):
+        if list1[i] != list2[i]:
+            return False
+    return True
+
+
 def find_2d(match, list, index):
     for element in list:
-        if match == list[index]:
-            return list
+        if match == element[index]:
+            return element
     return None
-
 
 
 def nzip(arr):
