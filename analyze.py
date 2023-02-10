@@ -1,11 +1,12 @@
 """
     This file contains all code related to analyzing the scraped data
 """
+import os.path
 import sys
 from typing import List, Union
 from defs import Table
 from disk import save_to_csv, read_dir
-from params import base_directory, analyze_file_name
+from params import analyze_suffix
 from utils import output
 
 
@@ -64,10 +65,11 @@ def create_results_matrix_from_data(data: Table) -> Table:
 # TODO: Normalize queue days over several days
 
 def analyze(directory):
-    output("Running analyzer in {}".format(base_directory))
+    output("Running analyzer in " + directory)
     data = read_dir(directory)
     res = iterate_changes(data)
-    save_to_csv(res, directory, analyze_file_name)
+    file_name = os.path.basename(directory) + analyze_suffix
+    save_to_csv(res, directory, file_name)
 
 
 if __name__ == "__main__":

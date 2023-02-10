@@ -7,7 +7,7 @@ from os.path import isfile, join
 import os
 
 from defs import Table
-from params import  disk_time_format, analyze_file_name
+from params import disk_time_format, analyze_suffix
 from utils import output
 
 
@@ -63,7 +63,7 @@ def read_dir(directory) -> List[Table]:
     res = []
     for item in os.listdir(directory):
         p = os.path.join(directory, item)
-        if os.path.isfile(p) and not item.startswith(".") and not item.startswith(analyze_file_name):
+        if os.path.isfile(p) and not item.startswith(".") and not analyze_suffix in item:
             output("Reading {}".format(p))
             res.append(read_csv(p))
     return res

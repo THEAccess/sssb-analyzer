@@ -14,4 +14,4 @@ run_interval_minutes_closing = 1
 # Determines when the programme should run more often when it's close to SSSB closing times in minutes
 closing_time_proximity_threshold = 60
 # Analyze file name
-analyze_file_name = "analyze_results"
+analyze_suffix = "_analyzed"
