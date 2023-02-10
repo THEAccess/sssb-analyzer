@@ -5,7 +5,7 @@ import datetime
 from disk import get_current_working_dir, find_most_recent_file_path, read_csv, save_to_csv
 from scraper import get_website_content, extract_sssb_data
 from utils import find_2d, lists_equal, output
-from constants import target, console_time_format
+from params import base_url, console_time_format
 
 
 def any_diff(current, new) -> bool:
@@ -26,7 +26,7 @@ def find_diff(current, new):
 def run():
     current_dir = get_current_working_dir()
     prev_path = find_most_recent_file_path(current_dir)
-    content = get_website_content(target)
+    content = get_website_content(base_url)
     data = extract_sssb_data(content)
 
     if prev_path is not None:

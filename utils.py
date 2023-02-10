@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from constants import console_time_format
+from params import console_time_format
 
 
 def nmap(func, array):

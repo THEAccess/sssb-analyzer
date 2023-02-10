@@ -5,7 +5,7 @@ import datetime
 from date import closest_monday_16_or_thursday_10
 from os.path import isfile, join
 import os
-from constants import directory, disk_time_format
+from params import base_directory, disk_time_format
 
 
 def save_to_csv(data, path):
@@ -31,7 +31,7 @@ def find_most_recent_file_path(path) -> Optional[str]:
 
 
 def get_current_working_dir() -> str:
-    path = "{directory}/{d}".format(directory=directory,
+    path = "{directory}/{d}".format(directory=base_directory,
                                     d=closest_monday_16_or_thursday_10().strftime(disk_time_format))
 
     dir = path.rsplit('/', 1)[0]
