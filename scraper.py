@@ -6,8 +6,9 @@ import time
 
 
 def get_website_content(url):
-    driver = webdriver.Chrome(ChromeDriverManager().install())
-    driver.minimize_window()
+    options = Options()
+    options.headless = True
+    driver = webdriver.Chrome(options=options)
     driver.get(url)
     time.sleep(4)
     html = driver.page_source
