@@ -35,12 +35,7 @@ def scraper_loop():
         time.sleep(60 * run_interval_minutes_default)
 
 
-def analyze():
-    dir = "{}/testdata".format(base_directory)
-    data = read_dir(dir)
-    res = iterate_changes(data)
-    save_to_csv(res, dir, analyze_file_name)
 
 
 if __name__ == '__main__':
-    analyze()
+    scraper_loop()

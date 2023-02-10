@@ -1,8 +1,12 @@
 """
     This file contains all code related to analyzing the scraped data
 """
+import sys
 from typing import List, Union
 from defs import Table
+from disk import save_to_csv, read_dir
+from params import base_directory, analyze_file_name
+from utils import output
 
 
 def compare_change(a: Table, b: Table, result: List[List[Union[str, int]]]):
@@ -56,4 +60,18 @@ def create_results_matrix_from_data(data: Table) -> Table:
         res.append([id, no_unknowns, queue_days])
     return res
 
-#TODO: Normalize queue days over several days
+
+# TODO: Normalize queue days over several days
+
+def analyze(directory):
+    output("Running analyzer in {}".format(base_directory))
+    data = read_dir(directory)
+    res = iterate_changes(data)
+    save_to_csv(res, directory, analyze_file_name)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("[ERROR] Missing argument: path")
+    arg = sys.argv[1]
+    analyze(arg)
