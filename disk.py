@@ -7,7 +7,7 @@ from os.path import isfile, join
 import os
 
 from defs import Table
-from params import base_directory, disk_time_format, analyze_file_name
+from params import  disk_time_format, analyze_file_name
 from utils import output
 
 
@@ -33,8 +33,8 @@ def find_most_recent_file_path(path) -> Optional[str]:
     return "{path}/{f}".format(path=path, f=sorted_files[0])
 
 
-def get_current_working_dir() -> str:
-    path = "{directory}/{d}".format(directory=base_directory,
+def get_current_working_dir(base_dir) -> str:
+    path = "{directory}/{d}".format(directory=base_dir,
                                     d=next_closest_SSSB_closing_time().strftime(disk_time_format))
 
     dir = path.rsplit('/', 1)[0]

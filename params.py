@@ -2,8 +2,6 @@ import os
 
 # SSSB site that should be scraped. Possible filters can be applied here
 base_url = "https://sssb.se/soka-bostad/sok-ledigt/lediga-bostader/?actionId=&omraden=Lappis&oboTyper=BOAS1&hyraMax="
-# Directory where the scraped data should be stored
-base_directory = "{}/sssbscraper".format(os.getenv('HOME'))
 # Time format used for console outputs
 console_time_format = '%Y.%m.%d %H:%M:%S'
 # Time format used for naming directories and files

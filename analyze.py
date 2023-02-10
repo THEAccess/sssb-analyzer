@@ -73,5 +73,6 @@ def analyze(directory):
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("[ERROR] Missing argument: path")
+        exit()
     arg = sys.argv[1]
     analyze(arg)

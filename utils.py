@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from typing import List
 
@@ -118,3 +119,14 @@ def find_diff(current, new) -> List[str]:
         if opposite is not None and not lists_equal(new, opposite):
             res.append(opposite)
     return res
+
+
+def get_arg(name: str, index: int) -> str:
+    # Check if the number of command line arguments is less than the index provided
+    if len(sys.argv) <= index + 1:
+        # If so, print an error message indicating that the argument is missing
+        print("[ERROR] Missing argument: {}".format(name))
+        # Exit the program
+        exit()
+    # Return the argument at the specified index in the sys.argv list
+    return sys.argv[index + 1]
