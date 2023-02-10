@@ -9,6 +9,7 @@ from os.path import isfile, join
 import datetime
 from typing import List
 from selenium.webdriver.chrome.service import Service
+from date import closest_monday_16_or_thursday_10
 from webdriver_manager.chrome import ChromeDriverManager
 
 from utils import find_sssb_element, nzip, nmap, find_2d, lists_equal
@@ -20,6 +21,7 @@ time_format = '%Y-%m-%d_%H-%M-%S'
 
 def get_website_content(url):
     driver = webdriver.Chrome(ChromeDriverManager().install())
+    driver.minimize_window()
     driver.get(url)
     time.sleep(4)
     html = driver.page_source
@@ -48,9 +50,8 @@ def extract_data(website):
     return z
 
 
-def save_to_csv(data):
-    file_name = "{directory}/{time}.csv".format(directory=directory, time=datetime.datetime.now().strftime(time_format))
-    f = open(file_name, 'w')
+def save_to_csv(data, path):
+    f = open(path, 'w')
 
     writer = csv.writer(f)
 
@@ -60,13 +61,27 @@ def save_to_csv(data):
     f.close()
 
 
-def find_most_recent_file_path() -> Optional[str]:
-    files = [f for f in os.listdir(directory) if isfile(join(directory, f)) and f != ".DS_Store"]
+def find_most_recent_file_path(path) -> Optional[str]:
+    if not os.path.isdir(path):
+        return None
+    files = [f for f in os.listdir(path) if isfile(join(path, f)) and f != ".DS_Store"]
     if len(files) == 0:
         return None
     sorted_files = sorted(files, key=lambda e: datetime.datetime.strptime(e.removesuffix('.csv'), time_format),
                           reverse=True)
-    return "{directory}/{f}".format(directory=directory, f=sorted_files[0])
+    return "{path}/{f}".format(path=path, f=sorted_files[0])
+
+
+def get_current_working_dir() -> str:
+    path = "{directory}/{d}/{time}.csv".format(directory=directory,
+                                               d=closest_monday_16_or_thursday_10().strftime(time_format),
+                                               time=datetime.datetime.now().strftime(time_format))
+    dir = path.rsplit('/', 1)[0]
+
+    if not os.path.isdir(dir):
+        os.mkdir(dir)
+
+    return path
 
 
 def read_csv(path) -> List[List[str]]:
@@ -98,7 +113,8 @@ def find_diff(current, new):
 
 
 def run():
-    prev_path = find_most_recent_file_path()
+    current_dir = get_current_working_dir()
+    prev_path = find_most_recent_file_path(current_dir)
     content = get_website_content(target)
     data = extract_data(content)
 
@@ -106,11 +122,11 @@ def run():
         previous = read_csv(prev_path)
         if any_diff(previous, data):
             print("{}: Found difference. Saving".format(datetime.datetime.now()))
-            save_to_csv(data)
+            save_to_csv(data, current_dir)
         else:
             print("Didn't find any difference. Not saving file")
     else:
-        save_to_csv(data)
+        save_to_csv(data, current_dir)
 
     print(data)
 
