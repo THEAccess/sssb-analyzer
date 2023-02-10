@@ -2,7 +2,7 @@ import datetime
 import time
 
 from disk import get_current_working_dir, find_most_recent_file_path, read_csv, save_to_csv
-from params import base_url
+from params import base_url, run_interval_minutes_default
 from scraper import get_website_content, extract_sssb_data
 from utils import output, any_diff
 
@@ -30,7 +30,7 @@ def loop():
     while True:
         output("Running scheduled execution")
         run()
-        time.sleep(60 * 5)
+        time.sleep(60 * run_interval_minutes_default)
 
 
 if __name__ == '__main__':
