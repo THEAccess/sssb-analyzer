@@ -15,14 +15,11 @@ def save_to_csv(data: Table, path, name = None):
     n = datetime.datetime.now().strftime(disk_time_format)
     if name is not None:
         n = name
-    f = open("{p}/{f}.csv".format(p=path, f=n), 'w')
+    with open("{p}/{f}.csv".format(p=path, f=n), 'w') as f:
+        writer = csv.writer(f)
 
-    writer = csv.writer(f)
-
-    for row in data:
-        writer.writerow(row)
-
-    f.close()
+        for row in data:
+            writer.writerow(row)
 
 
 def find_most_recent_file_path(path) -> Optional[str]:
