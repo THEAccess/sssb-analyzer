@@ -1,26 +1,10 @@
+import datetime
 import time
 
-import datetime
-
 from disk import get_current_working_dir, find_most_recent_file_path, read_csv, save_to_csv
+from params import base_url
 from scraper import get_website_content, extract_sssb_data
-from utils import find_2d, lists_equal, output
-from params import base_url, console_time_format
-
-
-def any_diff(current, new) -> bool:
-    return not find_diff(current, new)
-
-
-def find_diff(current, new):
-    res = list()
-    current.pop(0)
-    new.pop(0)
-    for entry in current:
-        opposite = find_2d(entry[0], new, 0)
-        if opposite is not None and not lists_equal(new, opposite):
-            res.append(opposite)
-    return res
+from utils import output, any_diff
 
 
 def run():

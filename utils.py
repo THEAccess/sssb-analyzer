@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from params import console_time_format
 
@@ -82,3 +83,38 @@ def output(s: str) -> None:
            None
        """
     print("{t}: {s}".format(t=datetime.now().strftime(console_time_format), s=s))
+
+
+def any_diff(current, new) -> bool:
+    """
+       Check if there is any difference between the current and new data.
+
+       Arguments:
+           current (List[List[str]]): The current data.
+           new (List[List[str]]): The new data.
+
+       Returns:
+           bool: True if there is a difference between the current and new data, False otherwise.
+       """
+    return not find_diff(current, new)
+
+
+def find_diff(current, new) -> List[str]:
+    """
+     Find the differences between the current and new data.
+
+     Arguments:
+         current (List[List[str]]): The current data.
+         new (List[List[str]]): The new data.
+
+     Returns:
+         List[str]: A list of entries that are different between the current and new data.
+     """
+    res = list()
+    current.pop(0)
+    new.pop(0)
+    for entry in current:
+        opposite = find_2d(entry[0], new, 0)
+        if opposite is not None and not lists_equal(new, opposite):
+            res.append(opposite)
+    return res
