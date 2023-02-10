@@ -1,100 +1,11 @@
 import time
-from typing import Optional
 
-from bs4 import BeautifulSoup
-from selenium import webdriver
-import csv
-import os
-from os.path import isfile, join
 import datetime
-from typing import List
-from selenium.webdriver.chrome.service import Service
-from date import closest_monday_16_or_thursday_10
-from webdriver_manager.chrome import ChromeDriverManager
 
-from utils import find_sssb_element, nzip, nmap, find_2d, lists_equal
-
-target = "https://sssb.se/soka-bostad/sok-ledigt/lediga-bostader/?actionId=&omraden=Lappis&oboTyper=BOAS1&hyraMax="
-directory = "{}/sssbscraper".format(os.getenv('HOME'))
-time_format = '%Y-%m-%d_%H-%M-%S'
-
-
-def get_website_content(url):
-    driver = webdriver.Chrome(ChromeDriverManager().install())
-    driver.minimize_window()
-    driver.get(url)
-    time.sleep(4)
-    html = driver.page_source
-    return BeautifulSoup(html, 'html.parser')
-
-
-def extract_data(website):
-    id = find_sssb_element(website, 'h4', 'ObjektAdress', lambda e: e.find('a'))
-    headlines = find_sssb_element(website, 'h3', 'ObjektTyp', lambda e: e.find('a'))
-
-    raw_queue_days = find_sssb_element(website, 'dd', 'ObjektAntalIntresse')
-    split = nzip(nmap(lambda e: e.split(' '), raw_queue_days))
-
-    queue_days = split[0]
-    no_applicants = nmap(lambda s: s[1:2], split[1])
-    moving_in_date = find_sssb_element(website, 'dd', 'ObjektInflytt')
-    size = find_sssb_element(website, 'dd', 'ObjektYta')
-    rent = find_sssb_element(website, 'dd', 'ObjektHyra')
-    floor = nmap(lambda s: s.strip(), find_sssb_element(website, 'dd', 'ObjektVaning'))
-
-    t = [id, headlines, queue_days, no_applicants, moving_in_date, floor, size, rent]
-    titles = ["Id", "Title", "Queue Days", "No. Applicants", "Moving in Date", "Flor", "Size", "Rent"]
-
-    z = nzip(t)
-    z.insert(0, titles)
-    return z
-
-
-def save_to_csv(data, path):
-    f = open(path, 'w')
-
-    writer = csv.writer(f)
-
-    for row in data:
-        writer.writerow(row)
-
-    f.close()
-
-
-def find_most_recent_file_path(path) -> Optional[str]:
-    if not os.path.isdir(path):
-        return None
-    files = [f for f in os.listdir(path) if isfile(join(path, f)) and f != ".DS_Store"]
-    if len(files) == 0:
-        return None
-    sorted_files = sorted(files, key=lambda e: datetime.datetime.strptime(e.removesuffix('.csv'), time_format),
-                          reverse=True)
-    return "{path}/{f}".format(path=path, f=sorted_files[0])
-
-
-def get_current_working_dir() -> str:
-    path = "{directory}/{d}/{time}.csv".format(directory=directory,
-                                               d=closest_monday_16_or_thursday_10().strftime(time_format),
-                                               time=datetime.datetime.now().strftime(time_format))
-    dir = path.rsplit('/', 1)[0]
-
-    if not os.path.isdir(dir):
-        os.mkdir(dir)
-
-    return path
-
-
-def read_csv(path) -> List[List[str]]:
-    # opening the CSV file
-    res = []
-    with open(path, mode='r') as file:
-        # reading the CSV file
-        f = csv.reader(file)
-
-        # displaying the contents of the CSV file
-        for lines in f:
-            res.append(lines)
-    return res
+from disk import get_current_working_dir, find_most_recent_file_path, read_csv, save_to_csv
+from scraper import get_website_content, extract_sssb_data
+from utils import find_2d, lists_equal
+from constants import target
 
 
 def any_diff(current, new) -> bool:
@@ -116,7 +27,7 @@ def run():
     current_dir = get_current_working_dir()
     prev_path = find_most_recent_file_path(current_dir)
     content = get_website_content(target)
-    data = extract_data(content)
+    data = extract_sssb_data(content)
 
     if prev_path is not None:
         previous = read_csv(prev_path)
