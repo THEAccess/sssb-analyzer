@@ -5,11 +5,17 @@ import datetime
 from date import next_closest_SSSB_closing_time
 from os.path import isfile, join
 import os
-from params import base_directory, disk_time_format
+
+from defs import Table
+from params import base_directory, disk_time_format, analyze_file_name
+from utils import output
 
 
-def save_to_csv(data, path):
-    f = open("{p}/{f}.csv".format(p=path, f=datetime.datetime.now().strftime(disk_time_format)), 'w')
+def save_to_csv(data: Table, path, name = None):
+    n = datetime.datetime.now().strftime(disk_time_format)
+    if name is not None:
+        n = name
+    f = open("{p}/{f}.csv".format(p=path, f=n), 'w')
 
     writer = csv.writer(f)
 
@@ -42,7 +48,7 @@ def get_current_working_dir() -> str:
     return path
 
 
-def read_csv(path) -> List[List[str]]:
+def read_csv(path) -> Table:
     # opening the CSV file
     res = []
     with open(path, mode='r') as file:
@@ -52,4 +58,16 @@ def read_csv(path) -> List[List[str]]:
         # displaying the contents of the CSV file
         for lines in f:
             res.append(lines)
+    res.pop(0)
+    return res
+
+
+def read_dir(directory) -> List[Table]:
+    res = []
+    for root, dirs, files in os.walk(directory):
+        for filename in files:
+            if not filename.startswith(".") and not filename == analyze_file_name:
+                p = os.path.join(root, filename)
+                output("Reading {}".format(p))
+                res.append(read_csv(p))
     return res

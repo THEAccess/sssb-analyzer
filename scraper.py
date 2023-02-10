@@ -1,4 +1,4 @@
-from defs import Data
+from defs import Table
 from utils import nmap, nzip
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
@@ -21,7 +21,7 @@ def get_website_content(url):
     return BeautifulSoup(html, 'html.parser')
 
 
-def extract_sssb_data(website) -> Data:
+def extract_sssb_data(website) -> Table:
     id = find_sssb_element(website, 'h4', 'ObjektAdress', lambda e: e.find('a'))
     headlines = find_sssb_element(website, 'h3', 'ObjektTyp', lambda e: e.find('a'))
 

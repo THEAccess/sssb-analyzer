@@ -1,8 +1,9 @@
 import datetime
 import time
 
-from disk import get_current_working_dir, find_most_recent_file_path, read_csv, save_to_csv
-from params import base_url, run_interval_minutes_default
+from anaylze import iterate_changes
+from disk import get_current_working_dir, find_most_recent_file_path, read_csv, save_to_csv, read_dir
+from params import base_url, run_interval_minutes_default, base_directory, analyze_file_name
 from scraper import get_website_content, extract_sssb_data
 from utils import output, any_diff
 
@@ -34,5 +35,12 @@ def scraper_loop():
         time.sleep(60 * run_interval_minutes_default)
 
 
+def analyze():
+    dir = "{}/testdata".format(base_directory)
+    data = read_dir(dir)
+    res = iterate_changes(data)
+    save_to_csv(res, dir, analyze_file_name)
+
+
 if __name__ == '__main__':
-    scraper_loop()
+    analyze()
