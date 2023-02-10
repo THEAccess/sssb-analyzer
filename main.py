@@ -9,6 +9,7 @@ from os.path import isfile, join
 import datetime
 from typing import List
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 from utils import find_sssb_element, nzip, nmap, find_2d, lists_equal
 
@@ -18,9 +19,9 @@ time_format = '%Y-%m-%d_%H-%M-%S'
 
 
 def get_website_content(url):
-    s = Service('./chromedriver')
-    driver = webdriver.Chrome(s)
+    driver = webdriver.Chrome(ChromeDriverManager().install())
     driver.get(url)
+    time.sleep(4)
     html = driver.page_source
     return BeautifulSoup(html, 'html.parser')
 
