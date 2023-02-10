@@ -1,8 +1,10 @@
 from utils import nmap, nzip
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import time
 
 
 def get_website_content(url):
@@ -10,7 +12,7 @@ def get_website_content(url):
     options.headless = True
     driver = webdriver.Chrome(options=options)
     driver.get(url)
-    time.sleep(4)
+    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'ObjektAntalIntresse')))
     html = driver.page_source
     return BeautifulSoup(html, 'html.parser')
 
