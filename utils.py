@@ -1,3 +1,8 @@
+from datetime import datetime
+
+from constants import console_time_format
+
+
 def nmap(func, array):
     return list(map(func, array))
 
@@ -24,3 +29,7 @@ def find_2d(match, list, index):
 
 def nzip(arr):
     return list(zip(*arr))
+
+
+def output(s: str) -> None:
+    print("{t}: {s}".format(t=datetime.now().strftime(console_time_format), s=s))

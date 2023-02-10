@@ -4,8 +4,8 @@ import datetime
 
 from disk import get_current_working_dir, find_most_recent_file_path, read_csv, save_to_csv
 from scraper import get_website_content, extract_sssb_data
-from utils import find_2d, lists_equal
-from constants import target
+from utils import find_2d, lists_equal, output
+from constants import target, console_time_format
 
 
 def any_diff(current, new) -> bool:
@@ -44,7 +44,7 @@ def run():
 
 def loop():
     while True:
-        print("{}: Scheduled execution".format(datetime.datetime.now()))
+        output("Running scheduled execution")
         run()
         time.sleep(60 * 5)
 
