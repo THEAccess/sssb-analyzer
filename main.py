@@ -1,7 +1,7 @@
 import datetime
 import time
 
-from anaylze import iterate_changes
+from analyze import iterate_changes
 from disk import get_current_working_dir, find_most_recent_file_path, read_csv, save_to_csv, read_dir
 from params import base_url, run_interval_minutes_default, base_directory, analyze_file_name
 from scraper import get_website_content, extract_sssb_data

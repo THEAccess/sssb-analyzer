@@ -55,3 +55,5 @@ def create_results_matrix_from_data(data: Table) -> Table:
         no_unknowns = int(e[3]) - 1
         res.append([id, no_unknowns, queue_days])
     return res
+
+#TODO: Normalize queue days over several days
