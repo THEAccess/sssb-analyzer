@@ -72,12 +72,12 @@ def nzip(arr):
     return list(zip(*arr))
 
 
-def output(s: str) -> None:
+def output(s) -> None:
     """
        This function prints a string with a timestamp in a specified format.
 
        Args:
-           s (str): The string to be printed.
+           s : The string to be printed.
 
        Returns:
            None
