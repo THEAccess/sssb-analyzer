@@ -15,7 +15,7 @@ def run(directory: str, url: str):
     html_content = get_website_content(url)
     data = extract_sssb_data(html_content)
 
-    output(data)
+    print(pprint_conv(data))
 
     if prev_file_path is not None:
         previous = read_csv(prev_file_path)
