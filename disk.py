@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 import csv
 from typing import List
 import datetime
@@ -53,9 +53,19 @@ def read_csv(path) -> Table:
         f = csv.reader(file)
 
         # displaying the contents of the CSV file
-        for lines in f:
-            res.append(lines)
+        for row in f:
+            res.append(conv_row(row))
     res.pop(0)
+    return res
+
+
+def conv_row(row: List[str]) -> List[Union[str, int]]:
+    res = []
+    for e in row:
+        try:
+            res.append(int(e))
+        except:
+            res.append(e)
     return res
 
 
