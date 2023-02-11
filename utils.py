@@ -2,6 +2,9 @@ import sys
 from datetime import datetime
 from typing import List
 
+from colorama import Style, Fore
+
+from defs import Table
 from params import console_time_format
 
 
@@ -83,7 +86,7 @@ def output(s) -> None:
        Returns:
            None
        """
-    print("{t}: {s}".format(t=datetime.now().strftime(console_time_format), s=s))
+    print("{t}: {s}".format(t=datetime.now().strftime(console_time_format), s=s) + Style.RESET_ALL)
 
 
 def any_diff(current, new) -> bool:
@@ -125,7 +128,7 @@ def get_arg(name: str, index: int) -> str:
     # Check if the number of command line arguments is less than the index provided
     if len(sys.argv) <= index + 1:
         # If so, print an error message indicating that the argument is missing
-        print("[ERROR] Missing argument: {}".format(name))
+        print(Fore.RED + "[ERROR] Missing argument: {}".format(name))
         # Exit the program
         exit()
     # Return the argument at the specified index in the sys.argv list

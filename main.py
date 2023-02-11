@@ -1,10 +1,10 @@
-import datetime
-import time
 
+import time
 from disk import get_current_working_dir, find_most_recent_file_path, read_csv, save_to_csv
 from params import base_url, run_interval_minutes_default
 from scraper import get_website_content, extract_sssb_data
-from utils import output, any_diff, get_arg
+from utils import output, any_diff, get_arg, pprint_conv
+from colorama import Fore
 import optparse
 
 
@@ -20,7 +20,7 @@ def run(directory: str, url: str):
     if prev_file_path is not None:
         previous = read_csv(prev_file_path)
         if any_diff(previous, data):
-            output("Found difference. Saving .csv file")
+            output(Fore.GREEN + "Found difference. Saving .csv file")
             save_to_csv(data, working_dir)
         else:
             output("Didn't find any difference. Not saving file")
@@ -30,9 +30,9 @@ def run(directory: str, url: str):
 
 def loop(directory: str, url: str):
     output("Saving results to: {}".format(directory))
-    output("This programme will run indefinitely until terminated.")
+    output(Fore.MAGENTA + "This programme will run indefinitely until terminated.")
     while True:
-        output("Running scheduled execution")
+        output(Fore.YELLOW + "Running scheduled execution")
         run(directory, url)
         time.sleep(60 * run_interval_minutes_default)
 

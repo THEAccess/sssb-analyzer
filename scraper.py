@@ -1,5 +1,6 @@
 from typing import Optional
 
+from colorama import Fore
 from selenium.common import TimeoutException
 
 from defs import Table
@@ -30,12 +31,12 @@ def get_website_content(url) -> BeautifulSoup:
 
 def fetch_site(driver, url) -> Optional[str]:
     try:
-        output("Fetching site: {url}".format(url=url))
+        output(Fore.LIGHTWHITE_EX + "Fetching site: {url}".format(url=url))
         driver.get(url)
         WebDriverWait(driver, webdriver_timeout_secs).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'ObjektAntalIntresse')))
     except TimeoutException:
-        output("Timed out waiting for page to load")
+        output(Fore.RED + "Timed out waiting for page to load")
         return None
     return driver.page_source
 
