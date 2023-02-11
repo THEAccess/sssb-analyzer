@@ -97,7 +97,7 @@ def any_diff(current, new) -> bool:
        Returns:
            bool: True if there is a difference between the current and new data, False otherwise.
        """
-    return not find_diff(current, new)
+    return len(find_diff(current, new)) > 0
 
 
 def find_diff(current, new) -> List[str]:
@@ -116,7 +116,7 @@ def find_diff(current, new) -> List[str]:
     new.pop(0)
     for entry in current:
         opposite = find_2d(entry[0], new, 0)
-        if opposite is not None and not lists_equal(new, opposite):
+        if opposite is not None and not lists_equal(entry, opposite):
             res.append(opposite)
     return res
 

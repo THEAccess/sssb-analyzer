@@ -20,7 +20,7 @@ def run(directory: str, url: str):
     if prev_file_path is not None:
         previous = read_csv(prev_file_path)
         if any_diff(previous, data):
-            output("{}: Found difference. Saving".format(datetime.datetime.now()))
+            output("Found difference. Saving .csv file")
             save_to_csv(data, working_dir)
         else:
             output("Didn't find any difference. Not saving file")
