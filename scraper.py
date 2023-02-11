@@ -1,5 +1,10 @@
+from typing import Optional
+
+from selenium.common import TimeoutException
+
 from defs import Table
-from utils import nmap, nzip
+from params import webdriver_timeout_secs
+from utils import nmap, nzip, output
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -8,17 +13,31 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 
 
-def get_website_content(url):
+def get_website_content(url) -> BeautifulSoup:
     options = Options()
     # Set headless mode to True so the browser runs in the background
     options.headless = True
     driver = webdriver.Chrome(options=options)
-    driver.get(url)
-    # wait until element on page is located
-    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'ObjektAntalIntresse')))
-    html = driver.page_source
+
+    # Fetch the site repeatedly until it is loaded
+    html = None
+    while html is None:
+        html = fetch_site(driver, url)
+
     # Return dynamically generated html
     return BeautifulSoup(html, 'html.parser')
+
+
+def fetch_site(driver, url) -> Optional[str]:
+    try:
+        output("Fetching site: {url}".format(url=url))
+        driver.get(url)
+        WebDriverWait(driver, webdriver_timeout_secs).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'ObjektAntalIntresse')))
+    except TimeoutException:
+        output("Timed out waiting for page to load")
+        return None
+    return driver.page_source
 
 
 def extract_sssb_data(website) -> Table:

@@ -11,5 +11,7 @@ run_interval_minutes_default = 5
 run_interval_minutes_closing = 1
 # Determines when the programme should run more often when it's close to SSSB closing times in minutes
 closing_time_proximity_threshold = 60
+# Determines how long the programme should wait for a response from the server before timing out
+webdriver_timeout_secs = 30
 # Analyze file name
 analyze_suffix = "_analyzed"
