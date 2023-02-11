@@ -8,11 +8,11 @@ from utils import output, any_diff, get_arg
 import optparse
 
 
-def run(directory: str):
+def run(directory: str, url: str):
     working_dir = get_current_working_dir(directory)
     # Get the path of the csv file for the most recent data fetched before this run (if it exists)
     prev_file_path = find_most_recent_file_path(working_dir)
-    html_content = get_website_content(base_url)
+    html_content = get_website_content(url)
     data = extract_sssb_data(html_content)
 
     output(data)
@@ -33,7 +33,7 @@ def loop(directory: str, url: str):
     output("This programme will run indefinitely until terminated.")
     while True:
         output("Running scheduled execution")
-        run(directory)
+        run(directory, url)
         time.sleep(60 * run_interval_minutes_default)
 
 
@@ -41,5 +41,5 @@ if __name__ == '__main__':
     base_dir = get_arg("base_dir", 0)
     p = optparse.OptionParser()
     p.add_option('--url', '-u', default=base_url)
-    options, arguments = p.parse_args()
-    loop(arguments, options.url)
+    options, _ = p.parse_args()
+    loop(base_dir, options.url)
