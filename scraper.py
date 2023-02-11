@@ -50,9 +50,23 @@ def extract_sssb_data(website) -> Table:
     queue_days = nmap(lambda e: int(e), split[0])
     no_applicants = nmap(lambda s: int(s[1:2]), split[1])
     moving_in_date = find_sssb_element(website, 'dd', 'ObjektInflytt')
-    size = find_sssb_element(website, 'dd', 'ObjektYta')
     rent = find_sssb_element(website, 'dd', 'ObjektHyra')
-    floor = nmap(lambda s: s.strip(), find_sssb_element(website, 'dd', 'ObjektVaning'))
+
+    def conv_size(s):
+        s = s.rstrip(" m²")
+        return int(s)
+
+    size = nmap(conv_size, find_sssb_element(website, 'dd', 'ObjektYta'))
+
+    def conv_floor(s):
+        s = s.strip()
+        if s.isdigit():
+            s = int(s)
+        else:
+            s = 0
+        return s
+
+    floor = nmap(conv_floor, find_sssb_element(website, 'dd', 'ObjektVaning'))
 
     columns = [id, headlines, queue_days, no_applicants, moving_in_date, floor, size, rent]
     titles = ["Id", "Title", "Queue Days", "No. Applicants", "Moving in Date", "Flor", "Size", "Rent"]
