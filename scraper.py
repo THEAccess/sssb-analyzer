@@ -50,13 +50,14 @@ def extract_sssb_data(website) -> Table:
     queue_days = nmap(lambda e: int(e), split[0])
     no_applicants = nmap(lambda s: int(s[1:2]), split[1])
     moving_in_date = find_sssb_element(website, 'dd', 'ObjektInflytt')
-    rent = find_sssb_element(website, 'dd', 'ObjektHyra')
 
-    def conv_size(s):
-        s = s.rstrip(" m²")
+    def conv_num(s, suff):
+        s = s.rstrip(suff).replace(u'\xa0', '')
         return int(s)
 
-    size = nmap(conv_size, find_sssb_element(website, 'dd', 'ObjektYta'))
+    rent = nmap(lambda e: conv_num(e, " kr"), find_sssb_element(website, 'dd', 'ObjektHyra'))
+
+    size = nmap(lambda e: conv_num(e, ' m²'), find_sssb_element(website, 'dd', 'ObjektYta'))
 
     def conv_floor(s):
         s = s.strip()
@@ -69,7 +70,7 @@ def extract_sssb_data(website) -> Table:
     floor = nmap(conv_floor, find_sssb_element(website, 'dd', 'ObjektVaning'))
 
     columns = [id, headlines, queue_days, no_applicants, moving_in_date, floor, size, rent]
-    titles = ["Id", "Title", "Queue Days", "No. Applicants", "Moving in Date", "Flor", "Size", "Rent"]
+    titles = ["Id", "Title", "Queue Days", "No. Applicants", "Moving in Date", "Floor", "Size (m²)", "Rent (SEK)"]
 
     # Transpose from an array of columns to an array of rows to make it csv writeable
     rows = nzip(columns)
