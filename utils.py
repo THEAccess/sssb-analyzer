@@ -115,8 +115,6 @@ def find_diff(current, new) -> List[str]:
          List[str]: A list of entries that are different between the current and new data.
      """
     res = list()
-    current.pop(0)
-    new.pop(0)
     for entry in current:
         opposite = find_2d(entry[0], new, 0)
         if opposite is not None and not lists_equal(entry, opposite):
