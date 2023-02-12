@@ -118,6 +118,7 @@ def find_diff(current, new) -> List[str]:
     for entry in current:
         opposite = find_2d(entry[0], new, 0)
         if opposite is not None and not lists_equal(entry, opposite):
+            output("Diff: " + str(entry) + " -> " + str(opposite))
             res.append(opposite)
     return res
 
