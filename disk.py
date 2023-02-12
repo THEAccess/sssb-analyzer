@@ -22,10 +22,14 @@ def save_to_csv(data: Table, path, name=None):
             writer.writerow(row)
 
 
-def find_most_recent_file_path(path) -> Optional[str]:
+def all_csv_files(path) -> List[str]:
     if not os.path.isdir(path):
-        return None
-    files = [f for f in os.listdir(path) if isfile(join(path, f)) and f != ".DS_Store"]
+        return []
+    return [f for f in os.listdir(path) if isfile(join(path, f)) and f.endswith(".csv")]
+
+
+def find_most_recent_file_path(path) -> Optional[str]:
+    files = all_csv_files(path)
     if len(files) == 0:
         return None
     sorted_files = sorted(files, key=lambda e: datetime.datetime.strptime(e.removesuffix('.csv'), disk_time_format),
