@@ -1,8 +1,8 @@
-
 import time
 from disk import get_current_working_dir, find_most_recent_file_path, read_csv, save_to_csv
-from params import base_url, run_interval_minutes_default
+from params import base_url, run_interval_minutes_default, closing_time_proximity_threshold
 from scraper import get_website_content, extract_sssb_data
+from timeutils import is_next_SSSB_closing_time_near
 from utils import output, any_diff, get_arg, pprint_conv
 from colorama import Fore
 import optparse
@@ -34,7 +34,18 @@ def loop(directory: str, url: str):
     while True:
         output(Fore.YELLOW + "Running scheduled execution")
         run(directory, url)
-        time.sleep(60 * run_interval_minutes_default)
+        time.sleep(determine_delay())
+
+
+def determine_delay():
+    delay = run_interval_minutes_default * 60
+    if is_next_SSSB_closing_time_near(60):
+        delay = 30
+        output(Fore.CYAN + "Closing time close. Running more often")
+    elif is_next_SSSB_closing_time_near(10):
+        delay = 0
+        output(Fore.CYAN + "Closing time close. Running more often")
+    return delay
 
 
 if __name__ == '__main__':

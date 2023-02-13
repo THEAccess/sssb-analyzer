@@ -2,7 +2,7 @@ from typing import Optional, Union
 import csv
 from typing import List
 import datetime
-from date import next_closest_SSSB_closing_time
+from timeutils import next_closest_SSSB_closing_time
 from os.path import isfile, join
 import os
 
