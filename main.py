@@ -34,16 +34,18 @@ def loop(directory: str, url: str):
     while True:
         output(Fore.YELLOW + "Running scheduled execution")
         run(directory, url)
-        time.sleep(determine_delay())
+        next_delay = determine_delay()
+        output("Next execution in {} seconds".format(next_delay))
+        time.sleep(next_delay)
 
 
 def determine_delay():
     delay = run_interval_minutes_default * 60
-    if is_next_SSSB_closing_time_near(60):
-        delay = 30
-        output(Fore.CYAN + "Closing time close. Running more often")
-    elif is_next_SSSB_closing_time_near(10):
+    if is_next_SSSB_closing_time_near(10):
         delay = 0
+        output(Fore.CYAN + "Closing time close. Running more often")
+    elif is_next_SSSB_closing_time_near(60):
+        delay = 30
         output(Fore.CYAN + "Closing time close. Running more often")
     return delay
 
