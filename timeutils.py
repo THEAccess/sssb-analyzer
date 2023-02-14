@@ -1,4 +1,7 @@
 from datetime import datetime, timedelta, time
+from typing import List
+
+from params import disk_time_format
 
 
 def closest_day(wk_index: int, hour: int, minute: int):
@@ -51,3 +54,9 @@ def is_next_SSSB_closing_time_near(minutes):
     thursday_diff = (next_thursday_10 - now).total_seconds() / 60
     # Return true if the either Monday at 16:00 or Thursday at 10:00 is less than x minutes away
     return min(monday_diff, thursday_diff) <= minutes
+
+
+def get_time_range(dates: List[str]):
+    dates = [datetime.strptime(date, disk_time_format) for date in dates]
+    dates.sort()
+    return (dates[-1] - dates[0]).days
