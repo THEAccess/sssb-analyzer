@@ -11,11 +11,13 @@ from params import disk_time_format, analyze_suffix
 from utils import output
 
 
-def save_to_csv(data: Table, path, name=None):
+def save_to_csv(data: Table, directory, name=None):
     n = datetime.datetime.now().strftime(disk_time_format)
     if name is not None:
         n = name
-    with open("{p}/{f}.csv".format(p=path, f=n), 'w') as f:
+    if not os.path.isdir(directory):
+        os.mkdir(directory)
+    with open("{d}/{f}.csv".format(d=directory, f=n), 'w') as f:
         writer = csv.writer(f)
 
         for row in data:
