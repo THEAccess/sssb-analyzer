@@ -18,7 +18,7 @@ def run(directory: str, url: str):
     print(pprint_conv(data))
 
     if prev_file_path is not None:
-        previous = read_csv(prev_file_path)
+        previous = read_csv(prev_file_path)[0]
         if any_diff(previous, data):
             output(Fore.GREEN + "Found difference. Saving .csv file")
             save_to_csv(data, working_dir)

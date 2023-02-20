@@ -1,7 +1,7 @@
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 import csv
 from typing import List
-import datetime
+from datetime import datetime
 from timeutils import next_closest_SSSB_closing_time
 from os.path import isfile, join
 import os
@@ -12,7 +12,7 @@ from utils import output
 
 
 def save_to_csv(data: Table, directory, name=None):
-    n = datetime.datetime.now().strftime(disk_time_format)
+    n = datetime.now().strftime(disk_time_format)
     if name is not None:
         n = name
     if not os.path.isdir(directory):
@@ -34,7 +34,7 @@ def find_most_recent_file_path(path) -> Optional[str]:
     files = all_csv_files(path)
     if len(files) == 0:
         return None
-    sorted_files = sorted(files, key=lambda e: datetime.datetime.strptime(e.removesuffix('.csv'), disk_time_format),
+    sorted_files = sorted(files, key=lambda e: datetime.strptime(e.removesuffix('.csv'), disk_time_format),
                           reverse=True)
     return "{path}/{f}".format(path=path, f=sorted_files[0])
 
@@ -51,9 +51,10 @@ def get_current_working_dir(base_dir) -> str:
     return path
 
 
-def read_csv(path) -> Table:
+def read_csv(path) -> (Table, str):
     # opening the CSV file
     res = []
+    n = os.path.split(path)[1].removesuffix(".csv")
     with open(path, mode='r') as file:
         # reading the CSV file
         f = csv.reader(file)
@@ -62,7 +63,7 @@ def read_csv(path) -> Table:
         for row in f:
             res.append(conv_row(row))
     res.pop(0)
-    return res
+    return res, datetime.strptime(n, disk_time_format)
 
 
 def conv_row(row: List[str]) -> List[Union[str, int]]:
@@ -75,7 +76,7 @@ def conv_row(row: List[str]) -> List[Union[str, int]]:
     return res
 
 
-def read_dir(directory) -> List[Table]:
+def read_dir(directory) -> List[Tuple[Table, datetime]]:
     res = []
     for item in os.listdir(directory):
         p = os.path.join(directory, item)
