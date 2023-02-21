@@ -3,7 +3,7 @@ from disk import get_current_working_dir, find_most_recent_file_path, read_csv, 
 from params import base_url, run_interval_minutes_default, closing_time_proximity_threshold
 from scraper import get_website_content, extract_sssb_data
 from timeutils import is_next_SSSB_closing_time_near
-from utils import output, any_diff, get_arg, pprint_conv
+from utils import output, any_diff, get_arg, pprint_conv, url_fix_show_all
 from colorama import Fore
 import optparse
 
@@ -55,4 +55,4 @@ if __name__ == '__main__':
     p = optparse.OptionParser()
     p.add_option('--url', '-u', default=base_url)
     options, _ = p.parse_args()
-    loop(base_dir, options.url)
+    loop(base_dir, url_fix_show_all(options.url))

@@ -140,3 +140,10 @@ def pprint_conv(matrix: Table) -> str:
     fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
     table = [fmt.format(*row) for row in s]
     return '\n'.join(table)
+
+
+def url_fix_show_all(s):
+    t = "&pagination=0&paginationantal=0"
+    if not s.contains(t):
+        s.append(t)
+    return s
