@@ -16,12 +16,28 @@ def closest_day(wk_index: int, hour: int, minute: int):
         Returns:
             datetime.datetime: The next date and time of the desired weekday with the specified hour and minute.
         """
-    today = datetime.now()
-    # Calculate the next weekday using the weekday index, using the modulo operator to handle cases where the target
-    # weekday is earlier in the week than today.
-    next_monday = today + timedelta((7 + wk_index - today.weekday()) % 7)
-    # Combine the date of the next weekday with the specified hour and minute to get the final date and time.
-    return datetime.combine(next_monday, time(hour, minute))
+    # Get the current date and time
+    now = datetime.now()
+
+    # Calculate the next Monday and next Thursday
+    next_monday = now + timedelta(days=(7 - now.weekday()) % 7)
+    next_monday = next_monday.replace(hour=16, minute=0, second=0, microsecond=0)
+    if now > next_monday:
+        next_monday += timedelta(days=7)
+    next_thursday = now + timedelta(days=(3 - now.weekday()) % 7)
+    if now > next_thursday:
+        next_thursday += timedelta(days=7)
+    next_thursday = next_thursday.replace(hour=10, minute=0, second=0, microsecond=0)
+
+    # Calculate the time difference between now and each of the next times
+    monday_diff = abs(next_monday - now)
+    thursday_diff = abs(next_thursday - now)
+
+    # Return the next time that is closest to the current time
+    if monday_diff < thursday_diff:
+        return next_monday
+    else:
+        return next_thursday
 
 
 def next_closest_SSSB_closing_time():
@@ -49,9 +65,9 @@ def is_next_SSSB_closing_time_near(minutes):
     # Calculate the next Thursday at 10:00.
     next_thursday_10 = closest_day(3, 10, 0)
     # Calculate the difference between now and the next Monday at 16:00 in minutes.
-    monday_diff = (next_monday_16 - now).total_seconds() / 60
+    monday_diff = abs((next_monday_16 - now).total_seconds() / 60)
     # Calculate the difference between now and the next Thursday at 10:00 in minutes.
-    thursday_diff = (next_thursday_10 - now).total_seconds() / 60
+    thursday_diff = abs((next_thursday_10 - now).total_seconds() / 60)
     # Return true if the either Monday at 16:00 or Thursday at 10:00 is less than x minutes away
     return min(monday_diff, thursday_diff) <= minutes
 
